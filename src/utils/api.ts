@@ -10,7 +10,7 @@ enum MethodType {
   PATCH = 'PATCH',
 }
 
-const baseUrl = `${process.env.NEXT_PUBLIC_API_URL}`
+const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}`
 
 const get = async (endpoint: string): Promise<any> => {
   return await baseFetch({ endpoint, method: MethodType.GET })
@@ -28,20 +28,60 @@ const patch = async ({ endpoint, data }: FetchType): Promise<any> => {
   return await baseFetch({ endpoint, data, method: MethodType.PATCH })
 }
 
+const token = async ({ endpoint, data }: FetchType): Promise<any> => {
+  const formData = new FormData()
+  formData.append('username', data.username)
+  formData.append('password', data.password)
+  formData.append('grant_type', 'password')
+
+  const response = await fetch(`${apiUrl}${endpoint}`, {
+    method: 'POST',
+    body: formData,
+  })
+  return response
+}
+
+const uploadcsv = async ({ endpoint, data }: FetchType): Promise<any> => {
+  const token = localStorage.getItem('accessToken')
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': `${apiUrl}`,
+    Authorization: '',
+  }
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`
+  }
+
+  const response = await fetch(`${apiUrl}${endpoint}`, {
+    method: 'POST',
+    body: data,
+    headers,
+  })
+  return response
+}
+
 const baseFetch = async ({
   endpoint,
   data,
   method,
 }: FetchType & { method: MethodType }) => {
-  const response = await fetch(`${baseUrl}${endpoint}`, {
+  const token = localStorage.getItem('accessToken')
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': `${apiUrl}`,
+    Authorization: '',
+  }
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`
+  }
+
+  const response = await fetch(`${apiUrl}${endpoint}`, {
     method,
     body: JSON.stringify(data),
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': 'http://localhost:3001',
-      'Access-Control-Allow-Credentials': 'true',
-    },
-    credentials: 'include',
+    headers,
   })
   return response
 }
@@ -51,6 +91,8 @@ const Api = {
   post,
   put,
   patch,
+  token,
+  uploadcsv,
 }
 
 export default Api

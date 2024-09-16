@@ -3,9 +3,10 @@ import React, { MouseEventHandler } from 'react'
 
 interface ButtonProps {
   children: React.ReactNode
-  onClick?: MouseEventHandler<HTMLButtonElement>
+  onClick?: any
   className?: string
   variant?: 'primary' | 'secondary'
+  type?: 'button' | 'submit'
   disabled?: boolean
 }
 
@@ -14,6 +15,7 @@ const Button = ({
   onClick,
   className,
   variant = 'primary',
+  type = 'button',
   disabled = false,
 }: ButtonProps) => {
   const getVariant = (variant: string) => {
@@ -30,6 +32,7 @@ const Button = ({
 
   return (
     <button
+      type={type}
       onClick={onClick}
       className={className || getVariant(variant)}
       disabled={disabled}

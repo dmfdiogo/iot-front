@@ -1,6 +1,5 @@
 'use client'
-import LoginForm from '@/components/forms/login-form'
-import Button from '@/components/layout/button'
+import RegisterForm from '@/components/forms/register-form'
 import { useRouter } from 'next/navigation'
 
 const LoginPage = () => {
@@ -17,11 +16,7 @@ const LoginPage = () => {
       <main className="row-start-2 flex flex-col items-center gap-8 sm:items-start">
         <div className="rounded-lg border-2 border-zinc-800 bg-zinc-900 p-4">
           <div className="flex flex-col gap-4 p-4 text-primary">
-            <LoginForm />
-            <Button className={secondButtonStyle}>Forgot my password</Button>
-            <Button onClick={handleRegister} className={secondButtonStyle}>
-              Register
-            </Button>
+            <RegisterForm />
           </div>
         </div>
       </main>

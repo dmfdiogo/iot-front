@@ -11,6 +11,18 @@ interface IFormatTimestamp {
 }
 
 const useFormatters = () => {
+  const getQueryRange = (range: TimeRange) => {
+    switch (range) {
+      case TimeRange.TwentyFourHours:
+        return '-24h'
+      case TimeRange.FortyEightHours:
+        return '-48h'
+      case TimeRange.OneWeek:
+        return '-1w'
+      case TimeRange.OneMonth:
+        return '-1mo'
+    }
+  }
   const getRange = (range: TimeRange): Intl.DateTimeFormatOptions => {
     switch (range) {
       case TimeRange.TwentyFourHours:
@@ -56,6 +68,7 @@ const useFormatters = () => {
 
   return {
     formatTimestamp,
+    getQueryRange,
   }
 }
 

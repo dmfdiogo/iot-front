@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import Input from '../layout/input'
 import Button from '../layout/button'
 import { useRouter, usePathname } from 'next/navigation'
+import useAuthAPI from '@/app/api/auth-api'
+import { TokenResponse } from '@/types/responses'
 
 interface ICredential {
   username: string
@@ -11,27 +13,30 @@ interface ICredential {
 
 const LoginForm = () => {
   const router = useRouter()
+  const { userToken } = useAuthAPI()
 
   const [credential, setCredential] = useState<ICredential>({
     username: '',
     password: '',
   })
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    console.log('Credential:', credential)
+  const handleLogin = async () => {
+    const res: TokenResponse = await userToken(credential)
+    if (res.success) {
+      router.push('/dashboard')
+    }
   }
 
   const handleChange = ({ id, value }: { id: string; value: string }) => {
     setCredential((prev) => ({ ...prev, [id]: value }))
   }
 
-  const handleLogin = () => {
-    router.push('/dashboard')
-  }
+  // const handleLogin = () => {
+  //   router.push('/dashboard')
+  // }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form className="flex flex-col gap-4">
       <p className="mb-4 text-primary">IoT Frontend</p>
       <Input
         label={'Username'}

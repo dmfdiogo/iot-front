@@ -26,38 +26,33 @@ Chart.register(
 )
 
 interface Payload {
-  equipmentId: string
-  timestamp: string
+  time: string
   value: number
 }
 
 interface LineChartProps {
+  currentFilter: any
+  equipmentName: string
   payloadData: Payload[]
 }
 
-const LineChart = ({ payloadData }: LineChartProps) => {
+const LineChart = ({
+  currentFilter,
+  equipmentName,
+  payloadData,
+}: LineChartProps) => {
   const { formatTimestamp } = useFormatters()
-
-  const [currentFilter, setCurrentFilter] = useState<TimeRange>(
-    TimeRange.OneMonth
-  )
-
-  useEffect(() => {
-    console.log(currentFilter)
-  }, [currentFilter])
-
-  const handleFilterChange = setCurrentFilter
 
   const chartData = {
     labels: payloadData.map((item) =>
       formatTimestamp({
-        timestamp: item.timestamp,
+        timestamp: item.time,
         range: currentFilter,
       })
     ),
     datasets: [
       {
-        label: payloadData[0]?.equipmentId || 'Equipment Data',
+        label: equipmentName || 'Equipment Data',
         data: payloadData.map((item) => item.value),
         fill: false,
         borderColor: '#fb923c',
@@ -68,8 +63,7 @@ const LineChart = ({ payloadData }: LineChartProps) => {
 
   return (
     <div className="flex flex-1 flex-col">
-      <ChartFilters onTimeRangeChange={handleFilterChange} />
-      <p className="text-offwhite2 flex justify-center">Average: XX.XX</p>
+      <p className="flex justify-center text-offwhite2">Average: XX.XX</p>
       <Line className="container w-full" data={chartData} />
     </div>
   )

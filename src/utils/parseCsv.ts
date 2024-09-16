@@ -2,15 +2,15 @@ import Papa from 'papaparse'
 
 export interface CsvRow {
   equipmentId: string
-  timestamp: string // You might want to convert this to a Date object later
+  timestamp: string
   value: number
 }
 
 const parseCsv = (csvData: string): Promise<CsvRow[]> => {
   return new Promise((resolve, reject) => {
     Papa.parse(csvData, {
-      header: true, // Assumes the first row contains headers
-      dynamicTyping: true, // Automatically converts values to appropriate types
+      header: true,
+      dynamicTyping: true,
       skipEmptyLines: true,
       complete: (results: any) => {
         if (results.errors.length > 0) {

@@ -2,6 +2,7 @@
 import parseCsv, { CsvRow } from '@/utils/parseCsv'
 import React, { useState } from 'react'
 import Button from '../layout/button'
+import useEquipmentAPI from '@/app/api/equipment-api'
 
 interface CsvUploadFormProps {
   onUpload: (csvData: CsvRow[]) => void
@@ -24,6 +25,42 @@ const CsvUploadForm = ({ onUpload }: CsvUploadFormProps) => {
     }
   }
 
+  const handleUpload2 = async () => {
+    if (!selectedFile) {
+      alert('Please select a CSV file to upload.')
+      return
+    }
+    const formData = new FormData()
+    formData.append('file', selectedFile)
+
+    try {
+      const response = await fetch(
+        'http://localhost:8000/equipment/upload_csv/',
+        {
+          method: 'POST',
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        }
+      )
+
+      if (response.ok) {
+        const data = await response.json()
+        alert(data.message)
+      } else {
+        const errorData = await response.json()
+        console.error(
+          'Error uploading CSV:',
+          errorData.detail || response.statusText
+        )
+      }
+    } catch (error) {
+      console.error('Error during upload:', error)
+      // Handle network or other errors
+    }
+  }
+
   const handleUpload = async () => {
     if (!selectedFile) return
 
@@ -31,7 +68,7 @@ const CsvUploadForm = ({ onUpload }: CsvUploadFormProps) => {
     reader.onload = async (e) => {
       const csvData = e.target?.result as string
       try {
-        const parsedData = await parseCsv(csvData) // You'll need to implement the 'parseCsv' function
+        const parsedData = await parseCsv(csvData)
         onUpload(parsedData)
       } catch (error) {
         console.error('Error in parsing CSV: ', error)
@@ -50,7 +87,7 @@ const CsvUploadForm = ({ onUpload }: CsvUploadFormProps) => {
           accept=".csv"
           onChange={handleFileChange}
         />
-        <Button onClick={handleUpload} disabled={!selectedFile}>
+        <Button onClick={handleUpload2} disabled={!selectedFile}>
           Upload
         </Button>
       </div>
